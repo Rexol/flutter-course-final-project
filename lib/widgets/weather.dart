@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:weather/weather.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:final_project/secrets.dart';
 
+// ignore: constant_identifier_names
 enum AppState { NOT_DOWNLOADED, DOWNLOADING, FINISHED_DOWNLOADING }
 
 class WeatherWidget extends StatefulWidget {
   @override
-  _WeatherWidgetState createState() => _WeatherWidgetState();
+  const WeatherWidget({super.key});
+
+  @override
+  State createState() => _WeatherWidgetState();
 }
 
 class _WeatherWidgetState extends State<WeatherWidget> {
   String key = weather_api_key;
   late WeatherFactory ws;
-  List<Weather> _data = [];
+  Weather? _data;
   AppState _state = AppState.NOT_DOWNLOADED;
   double? lat, lon;
 
   @override
   void initState() {
     super.initState();
-    ws = new WeatherFactory(key);
+    ws = WeatherFactory(key);
+    queryWeather();
   }
 
   void queryWeather() async {
-    /// Removes keyboard
-    FocusScope.of(context).requestFocus(FocusNode());
+    await _coordinateFetch();
 
     setState(() {
       _state = AppState.DOWNLOADING;
@@ -34,38 +37,54 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
     Weather weather = await ws.currentWeatherByLocation(lat!, lon!);
     setState(() {
-      _data = [weather];
+      _data = weather;
       _state = AppState.FINISHED_DOWNLOADING;
     });
   }
 
+  String _weatherRepresentation() {
+    return _data == null
+        ? ''
+        : '''
+    Place Name: ${_data!.areaName} [${_data!.country}]
+    Date: ${_data!.date}
+    Weather: ${_data!.weatherMain}
+    Temp: ${_data!.temperature}, (feels like): ${_data!.tempFeelsLike}
+    Wind: speed ${_data!.windSpeed}
+    ''';
+  }
+
   Widget contentFinishedDownload() {
-    return Center(
-      child: ListView.separated(
-        itemCount: _data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_data[index].toString()),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
+    return Expanded(
+      child: Column(
+        children: [
+          _data == null
+              ? Container()
+              : Row(
+                  children: [
+                    Image.network(
+                        "http://openweathermap.org/img/w/${_data!.weatherIcon}.png"),
+                    Text(_weatherRepresentation()),
+                  ],
+                ),
+          _updateButton(),
+        ],
       ),
     );
   }
 
   Widget contentDownloading() {
     return Container(
-      margin: EdgeInsets.all(25),
+      margin: const EdgeInsets.all(25),
       child: Column(children: [
-        Text(
+        const Text(
           'Fetching Weather...',
           style: TextStyle(fontSize: 20),
         ),
         Container(
-            margin: EdgeInsets.only(top: 50),
-            child: Center(child: CircularProgressIndicator(strokeWidth: 10)))
+            margin: const EdgeInsets.only(top: 50),
+            child:
+                const Center(child: CircularProgressIndicator(strokeWidth: 10)))
       ]),
     );
   }
@@ -75,9 +94,10 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
+          const Text(
             'Press the button to download the Weather forecast',
           ),
+          _updateButton(),
         ],
       ),
     );
@@ -89,18 +109,6 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ? contentDownloading()
           : contentNotDownloaded();
 
-  void _saveLat(double input) {
-    setState(() {
-      lat = input;
-    });
-  }
-
-  void _saveLon(double input) {
-    setState(() {
-      lon = input;
-    });
-  }
-
   void _savePosition(Position position) {
     setState(() {
       lat = position.latitude;
@@ -108,7 +116,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     });
   }
 
-  void _getLatestCoords() async {
+  Future<void> _getLatestCoords() async {
     Position? pos = await Geolocator.getLastKnownPosition();
 
     if (pos != null) {
@@ -116,8 +124,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     }
   }
 
-  void _coordinateFetch() async {
-    _getLatestCoords();
+  Future<void> _coordinateFetch() async {
+    await _getLatestCoords();
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location service is disabled');
@@ -140,36 +148,20 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     _savePosition(pos);
   }
 
-  Widget _coordinateInputs() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text('Latitude: ${(lat ?? 0).toStringAsFixed(6)}'),
-            Text('Longtitude: ${(lon ?? 0).toStringAsFixed(6)}'),
-          ],
-        ),
-        OutlinedButton(
-            onPressed: _coordinateFetch, child: const Text('Get location')),
-      ],
-    );
-  }
-
-  Widget _buttons() {
+  Widget _updateButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
           child: TextButton(
-            child: Text(
-              'Fetch weather',
-              style: TextStyle(color: Colors.white),
-            ),
             onPressed: queryWeather,
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.blue)),
+            child: const Text(
+              'update',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
       ],
@@ -179,19 +171,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[
-        _coordinateInputs(),
-        _buttons(),
-        Text(
-          'Output:',
-          style: TextStyle(fontSize: 20),
-        ),
-        Divider(
-          height: 20.0,
-          thickness: 2.0,
-        ),
-        Expanded(child: _resultView())
-      ],
+      children: <Widget>[Expanded(child: _resultView())],
     );
   }
 }
