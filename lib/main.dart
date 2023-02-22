@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:final_project/pages/login.dart';
+import 'package:final_project/widgets/add_calorie_log.dart';
 
 void main() => runApp(const MyApp());
 
@@ -43,7 +44,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
       appBar: AppBar(
         title: const Text('Retrieve Text Input'),
       ),
-      body: LoginPage(),
+      body: CalorieInputWidget(),
       // Padding(
       //   padding: const EdgeInsets.all(16.0),
       //   child: TextField(
