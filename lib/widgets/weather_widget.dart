@@ -44,7 +44,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   Widget _weatherRepresentation() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Place Name: ${_data!.areaName} [${_data!.country}]'),
         Text('Date: ${_data!.date}'),
@@ -61,7 +61,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     final int code = _data!.weatherConditionCode ?? -1;
     return Text(
       'Wanna do some workout?',
-      style: Theme.of(context).textTheme.bodyLarge,
+      style: Theme.of(context).textTheme.titleLarge,
     );
   }
 
@@ -69,15 +69,14 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     return Column(
       children: [
         _weatherAnalysis(),
-        _data == null
-            ? Container()
-            : Row(
-                children: [
-                  Image.network(
-                      "http://openweathermap.org/img/w/${_data!.weatherIcon}.png"),
-                  _weatherRepresentation(),
-                ],
-              ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _weatherRepresentation(),
+            Image.network(
+                "http://openweathermap.org/img/w/${_data!.weatherIcon}.png"),
+          ],
+        ),
         _updateButton(),
       ],
     );
