@@ -1,3 +1,4 @@
+import 'package:final_project/widgets/calorie_stats_widget.dart';
 import 'package:final_project/widgets/navigation_drawer.dart';
 import 'package:final_project/widgets/weather_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,6 +34,10 @@ class HomePage extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(10),
               child: WeatherWidget(),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(10),
+              child: CalorieStats(),
             ),
           ],
         ),

@@ -51,5 +51,20 @@ CREATE TABLE IF NOT EXISTS $tablename (
     return data.map((e) => CalorieLog.fromMap(e)).toList();
   }
 
+  Future<List<CalorieLog>> getDayHistory() async {
+    List<Map<String, dynamic>> data = await db.query(
+      tablename,
+      columns: ['id', 'amount', 'time'],
+    );
+    final all = data.map((e) => CalorieLog.fromMap(e)).toList();
+    final today = DateTime.now();
+    return all.where((element) {
+      final date = element.time!;
+      return date.year == today.year &&
+          date.month == today.month &&
+          date.day == today.day;
+    }).toList();
+  }
+
   Future close() async => db.close();
 }
