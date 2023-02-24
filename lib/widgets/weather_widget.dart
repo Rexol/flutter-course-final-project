@@ -42,34 +42,44 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     });
   }
 
-  String _weatherRepresentation() {
-    return _data == null
-        ? ''
-        : '''
-    Place Name: ${_data!.areaName} [${_data!.country}]
-    Date: ${_data!.date}
-    Weather: ${_data!.weatherMain}
-    Temp: ${_data!.temperature}, (feels like): ${_data!.tempFeelsLike}
-    Wind: speed ${_data!.windSpeed}
-    ''';
+  Widget _weatherRepresentation() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text('Place Name: ${_data!.areaName} [${_data!.country}]'),
+        Text('Date: ${_data!.date}'),
+        Text('Weather: ${_data!.weatherMain}'),
+        Text('Temp: ${_data!.temperature}'),
+        Text('(feels like): ${_data!.tempFeelsLike}'),
+        Text('Wind: speed ${_data!.windSpeed}'),
+      ],
+    );
+  }
+
+  Widget _weatherAnalysis() {
+    late String res;
+    final int code = _data!.weatherConditionCode ?? -1;
+    return Text(
+      'Wanna do some workout?',
+      style: Theme.of(context).textTheme.bodyLarge,
+    );
   }
 
   Widget contentFinishedDownload() {
-    return Expanded(
-      child: Column(
-        children: [
-          _data == null
-              ? Container()
-              : Row(
-                  children: [
-                    Image.network(
-                        "http://openweathermap.org/img/w/${_data!.weatherIcon}.png"),
-                    Text(_weatherRepresentation()),
-                  ],
-                ),
-          _updateButton(),
-        ],
-      ),
+    return Column(
+      children: [
+        _weatherAnalysis(),
+        _data == null
+            ? Container()
+            : Row(
+                children: [
+                  Image.network(
+                      "http://openweathermap.org/img/w/${_data!.weatherIcon}.png"),
+                  _weatherRepresentation(),
+                ],
+              ),
+        _updateButton(),
+      ],
     );
   }
 
@@ -125,7 +135,6 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   }
 
   Future<void> _coordinateFetch() async {
-    await _getLatestCoords();
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location service is disabled');
@@ -143,6 +152,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       return Future.error(
           'Location permissions are permanently denied, we cannot fetch your location');
     }
+
+    await _getLatestCoords();
 
     Position pos = await Geolocator.getCurrentPosition();
     _savePosition(pos);
@@ -170,8 +181,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[Expanded(child: _resultView())],
+    return Card(
+      child: _resultView(),
     );
   }
 }

@@ -45,3 +45,4 @@ app.*.map.json
 
 # My custom ignores
 **/secrets.dart
+**/firebase_options.dart
