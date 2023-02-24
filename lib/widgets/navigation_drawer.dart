@@ -1,5 +1,6 @@
 import 'package:final_project/pages/calculator_page.dart';
 import 'package:final_project/pages/home_page.dart';
+import 'package:final_project/pages/log_calories_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,7 @@ class SideNavigationDrawer extends StatelessWidget {
 Widget buildHeader(BuildContext context) => Container();
 
 Widget buildMenuItems(BuildContext context) => Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.fromLTRB(18, 60, 18, 0),
       child: Wrap(
         runSpacing: 16,
         children: [
@@ -39,25 +40,26 @@ Widget buildMenuItems(BuildContext context) => Container(
           ListTile(
             leading: const Icon(Icons.calculate_outlined),
             title: const Text('Calculator'),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CalculatorPage(),
-              ),
-            ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CalculatorPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.toc_outlined),
             title: const Text('Log calories'),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CalculatorPage(),
-              ),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.description_outlined),
-            title: const Text('License'),
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const LogCaloriesPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.logout_outlined),
