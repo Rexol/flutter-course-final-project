@@ -10,7 +10,7 @@ class LogCaloriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calculator'),
+        title: const Text('How much I eat'),
       ),
       // drawer: const SideNavigationDrawer(),
       body: Container(

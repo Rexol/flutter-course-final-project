@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
               padding: EdgeInsets.all(10),
               child: WeatherWidget(),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(10),
               child: CalorieStats(),
             ),

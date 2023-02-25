@@ -13,61 +13,60 @@ class SideNavigationDrawer extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              buildHeader(context),
               buildMenuItems(context),
             ],
           ),
         ),
       );
-}
 
-Widget buildHeader(BuildContext context) => Container();
-
-Widget buildMenuItems(BuildContext context) => Container(
-      padding: const EdgeInsets.fromLTRB(18, 60, 18, 0),
-      child: Wrap(
-        runSpacing: 16,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.home_outlined),
-            title: const Text('Home'),
-            onTap: () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
+  Widget buildMenuItems(BuildContext context) => Container(
+        padding: const EdgeInsets.fromLTRB(18, 60, 18, 0),
+        child: Wrap(
+          runSpacing: 16,
+          children: [
+            // ListTile(
+            //   leading: const Icon(Icons.home_outlined),
+            //   title: const Text('Home'),
+            //   onTap: () => Navigator.of(context).pushReplacement(
+            //     MaterialPageRoute(
+            //       builder: (context) => HomePage(),
+            //     ),
+            //   ),
+            // ),
+            ListTile(
+              leading: const Icon(Icons.calculate_outlined),
+              title: const Text('Calculator'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const CalculatorPage(),
+                  ),
+                );
+                // .then((value) => updateState());
+              },
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.calculate_outlined),
-            title: const Text('Calculator'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const CalculatorPage(),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.toc_outlined),
-            title: const Text('Log calories'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const LogCaloriesPage(),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout_outlined),
-            title: const Text('Logout'),
-            onTap: () async {
-              await FirebaseAuth.instance.signOut();
-            },
-          ),
-        ],
-      ),
-    );
+            ListTile(
+              leading: const Icon(Icons.toc_outlined),
+              title: const Text('Log calories'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LogCaloriesPage(),
+                  ),
+                );
+                // .then((value) => updateState());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout_outlined),
+              title: const Text('Logout'),
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+              },
+            ),
+          ],
+        ),
+      );
+}
